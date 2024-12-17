@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "outDir": "dist",
+        "lib": [
+            "es2020"
+        ],
+        "target": "ES2021",
+        "module": "NodeNext",
+        "moduleResolution": "nodenext",
+        "esModuleInterop": true,
+        "types": [
+            "node"
+        ],
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+    },
+    "exclude": [
+            "node_modules"
+        ],
+        "include": [
+            "./src/**/*.tsx",
+            "./src/**/*.ts"
+        ],
+}
