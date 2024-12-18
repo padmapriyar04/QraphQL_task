@@ -1,9 +1,10 @@
-import { Field, ID, ObjectType } from "type-graphql";
+import { IsEmail, Length, MaxLength } from "class-validator";
+import { ArgsType, Field, ID, ObjectType } from "type-graphql";
 import { BaseEntity, Column, Entity, PrimaryColumn } from "typeorm";
 
 
 @ObjectType()
-@Entity()
+@Entity('User')
 export class User extends BaseEntity{
     @Field()
     @Column("varchar",{length:100})
@@ -15,7 +16,7 @@ export class User extends BaseEntity{
 
     @Field(()=> ID)
     @PrimaryColumn()
-    id : number;
+    id : string;
 
     @Field()
     @Column("text",{unique:true})
@@ -29,3 +30,41 @@ export class User extends BaseEntity{
     gender! : string;
 
 }
+
+@ArgsType()
+export class InputRegisterUser{
+    @Field(type => String, {nullable:false})
+    @Length(1,255)
+    name : string;
+
+    @Field(type =>String,{nullable : false})
+    @IsEmail()
+    email : string;
+
+    @Field(type => String,{nullable:false})
+    @MaxLength(1,{message: "Gender has to be a single character(M/F)"})
+    gender : string;
+
+    @Field(type => String,{nullable : false})
+    password : string;
+}
+
+@ArgsType()
+export class InputLoginUser{
+    @Field(type => String, {nullable : false})
+    @IsEmail()
+    email : string
+
+    @Field(type =>String, {nullable : false})
+    password : string
+}
+
+@ObjectType()
+export class AuthResponse {
+    @Field()
+    token!: string;
+  
+    @Field()
+    userId!: string;
+  }
+  
