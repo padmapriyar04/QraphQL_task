@@ -14,8 +14,18 @@ export class UserResolver {
         return "Hello"
     }
 
+    @Query()
+    async getUsers() {
+        try {
+            const users = await User.find();
+            return users;
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     @Mutation(() => AuthResponse)
-    async RegisterUser(@Args() inp: InputRegisterUser) : Promise<AuthResponse>{
+    async RegisterUser(@Args() inp: InputRegisterUser): Promise<AuthResponse> {
         try {
             const hashedPassword = await bcrypt.hash(inp.password, 12);
             const randomid = nanoid();
@@ -29,12 +39,12 @@ export class UserResolver {
             }).save()
 
             const token = jwt.sign(
-                {userId : user.id, email : user.email},
+                { userId: user.id, email: user.email },
                 process.env.JWT_SECRET,
-                {expiresIn: "1hr"}
+                { expiresIn: "1hr" }
             );
 
-            return {token : token, userId : user.id};
+            return { token: token, userId: user.id };
 
         } catch (error) {
             console.log(error);
@@ -42,32 +52,32 @@ export class UserResolver {
     }
 
     @Mutation(() => String)
-    async LoginUser(@Args() {email,password} : InputLoginUser) : Promise<String>{
-        const user = await User.findOneBy({email : email as string});
+    async LoginUser(@Args() { email, password }: InputLoginUser): Promise<String> {
+        const user = await User.findOneBy({ email: email as string });
 
-        if(!user){
+        if (!user) {
             return "User not found"
         }
 
-        const isValid = bcrypt.compare(password,user.password);
+        const isValid = bcrypt.compare(password, user.password);
 
-        if(!isValid){
+        if (!isValid) {
             return "Incorrect password"
         }
 
         const token = jwt.sign(
-            {email : user.email, userId : user.id},
+            { email: user.email, userId: user.id },
             process.env.JWT_SECRET,
-            {expiresIn : '6hr'},
+            { expiresIn: '6hr' },
         )
 
         return token;
     }
 
     @Mutation(() => String)
-    async LogoutUser(@Arg("token") token : string, @Ctx() {client} : {client : any}) : Promise<String>{
+    async LogoutUser(@Arg("token") token: string, @Ctx() { client }: { client: any }): Promise<String> {
         try {
-            await client.set(`blacklisted:${token}`,"true","EX",3600);
+            await client.set(`blacklisted:${token}`, "true", "EX", 3600);
             return "Logged out successfully!"
 
         } catch (error) {

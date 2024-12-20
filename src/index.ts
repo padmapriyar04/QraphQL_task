@@ -2,11 +2,12 @@ import "reflect-metadata";
 import { ApolloServer } from "@apollo/server";
 import { ArgumentValidationError, buildSchema, Query, Resolver } from "type-graphql";
 import { startStandaloneServer } from '@apollo/server/standalone';
-import { UserResolver } from "./modules/UserResolver.js";
+import { UserResolver } from "./Resolvers/UserResolver.js";
 import { AppDataSource } from "../datasource.js";
 import * as dotenv from 'dotenv';
 import {client} from './utils/redis.js';
 import { getUser } from "./context/context.js";
+import { BookResolver } from "./Resolvers/BookResolver.js";
 
 
 const main = async () => {
@@ -27,7 +28,7 @@ const main = async () => {
         await client.connect();
 
     const schema = await buildSchema({
-        resolvers: [UserResolver]
+        resolvers: [UserResolver,BookResolver]
     })
 
     const apolloServer = new ApolloServer({

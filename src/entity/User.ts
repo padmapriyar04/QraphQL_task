@@ -1,6 +1,7 @@
 import { IsEmail, Length, MaxLength } from "class-validator";
 import { ArgsType, Field, ID, ObjectType } from "type-graphql";
-import { BaseEntity, Column, Entity, PrimaryColumn } from "typeorm";
+import { BaseEntity, Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
+import { Book } from "./Books.js";
 
 
 @ObjectType()
@@ -28,6 +29,10 @@ export class User extends BaseEntity{
     @Field()
     @Column("char",{length:1})
     gender! : string;
+
+    @Field(() => [Book])
+    @OneToMany(() => Book,(book) => book.author)
+    books : Book[]
 
 }
 
